@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>超級AI翻譯機 — 台灣家庭與印尼看護的溝通橋樑</title>
+  <meta name="description" content="專為台灣家庭設計的 LINE 翻譯機器人，繁體中文 ↔ 印尼文即時翻譯，加好友就能用。">
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, "PingFang TC", "Noto Sans TC", sans-serif;
+      background: #FFF9F4;
+      color: #2C2C2C;
+      line-height: 1.7;
+      font-size: 16px;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* ── Colours ── */
+    :root {
+      --orange: #E8823A;
+      --orange-light: #FFF0E5;
+      --green: #3CAA6E;
+      --green-light: #EDF7F1;
+      --text: #2C2C2C;
+      --muted: #666;
+      --border: #E8DDD5;
+      --white: #FFFFFF;
+      --bg: #FFF9F4;
+    }
+
+    /* ── Utility ── */
+    .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 72px 0; }
+    .section-title {
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    .section-sub {
+      text-align: center;
+      color: var(--muted);
+      font-size: 15px;
+      margin-bottom: 48px;
+    }
+
+    /* ── CTA Button ── */
+    .btn-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #06C755;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 700;
+      padding: 16px 32px;
+      border-radius: 50px;
+      box-shadow: 0 4px 20px rgba(6,199,85,0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-line:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(6,199,85,0.4); }
+    .btn-line svg { flex-shrink: 0; }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,249,244,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+    }
+    nav .container { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-weight: 800; font-size: 17px; color: var(--orange); }
+    .nav-cta {
+      background: #06C755;
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 9px 20px;
+      border-radius: 50px;
+    }
+
+    /* ── Hero ── */
+    #hero {
+      padding: 80px 0 72px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: var(--orange-light);
+      color: var(--orange);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 50px;
+      margin-bottom: 20px;
+      letter-spacing: 0.03em;
+    }
+    .hero-title {
+      font-size: clamp(28px, 6vw, 48px);
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 18px;
+      color: var(--text);
+    }
+    .hero-title span { color: var(--orange); }
+    .hero-sub {
+      font-size: clamp(15px, 2.5vw, 18px);
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 36px;
+    }
+    .hero-cta-group { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .hero-note { font-size: 13px; color: var(--muted); }
+
+    /* ── 對話示意 ── */
+    .chat-demo {
+      margin: 56px auto 0;
+      max-width: 340px;
+      background: #E8F5E9;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+    }
+    .chat-demo-bar {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 16px;
+    }
+    .chat-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--orange);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 16px;
+    }
+    .chat-name { font-weight: 700; font-size: 14px; }
+    .bubble { border-radius: 16px; padding: 10px 14px; font-size: 14px; max-width: 85%; margin-bottom: 8px; line-height: 1.5; }
+    .bubble.user { background: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
+    .bubble.bot  { background: #06C755; color: #fff; align-self: flex-end; margin-left: auto; border-bottom-right-radius: 4px; }
+    .chat-bubbles { display: flex; flex-direction: column; }
+
+    /* ── Steps ── */
+    #steps { background: var(--white); }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 32px;
+    }
+    .step-card {
+      text-align: center;
+      padding: 32px 24px;
+      border-radius: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+    }
+    .step-icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--orange-light);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 28px;
+    }
+    .step-num {
+      display: inline-block;
+      background: var(--orange);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 50px;
+      margin-bottom: 10px;
+      letter-spacing: 0.05em;
+    }
+    .step-title { font-weight: 700; font-size: 17px; margin-bottom: 8px; }
+    .step-desc { color: var(--muted); font-size: 14px; }
+
+    /* ── Compare ── */
+    #compare { }
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 540px) { .compare-grid { grid-template-columns: 1fr; } }
+    .compare-card {
+      border-radius: 16px;
+      padding: 28px 24px;
+      border: 2px solid transparent;
+    }
+    .compare-card.ours {
+      background: var(--green-light);
+      border-color: var(--green);
+    }
+    .compare-card.theirs {
+      background: #F5F5F5;
+      border-color: #DDD;
+    }
+    .compare-tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 50px;
+      margin-bottom: 14px;
+    }
+    .compare-card.ours .compare-tag { background: var(--green); color: #fff; }
+    .compare-card.theirs .compare-tag { background: #999; color: #fff; }
+    .compare-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 16px; }
+    .compare-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .compare-list li { display: flex; gap: 10px; font-size: 14px; align-items: flex-start; }
+    .compare-list li span:first-child { flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Plans ── */
+    #plans { background: var(--white); }
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+    .plan-card {
+      border-radius: 20px;
+      padding: 32px 28px;
+      border: 2px solid var(--border);
+      background: var(--bg);
+      position: relative;
+    }
+    .plan-card.featured {
+      border-color: var(--orange);
+      background: var(--white);
+      box-shadow: 0 8px 32px rgba(232,130,58,0.15);
+    }
+    .plan-badge {
+      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+      background: var(--orange);
+      color: #fff;
+      font-size: 12px; font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 50px;
+      white-space: nowrap;
+    }
+    .plan-name { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .plan-price { font-size: 36px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .plan-price span { font-size: 16px; font-weight: 500; color: var(--muted); }
+    .plan-quota { font-size: 14px; color: var(--muted); margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+    .plan-features { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .plan-features li { display: flex; gap: 10px; font-size: 14px; align-items: flex-start; }
+    .plan-features li span:first-child { flex-shrink: 0; }
+
+    /* ── FAQ ── */
+    #faq { }
+    .faq-list { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    details {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    summary {
+      padding: 18px 20px;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after {
+      content: '+';
+      font-size: 20px;
+      color: var(--orange);
+      flex-shrink: 0;
+      margin-left: 12px;
+      transition: transform 0.2s;
+    }
+    details[open] summary::after { transform: rotate(45deg); }
+    .faq-body { padding: 0 20px 18px; color: var(--muted); font-size: 15px; line-height: 1.7; }
+
+    /* ── Final CTA ── */
+    #final-cta {
+      background: linear-gradient(135deg, #E8823A 0%, #E85A3A 100%);
+      color: #fff;
+      text-align: center;
+      padding: 80px 24px;
+    }
+    #final-cta .section-title { color: #fff; }
+    #final-cta .section-sub { color: rgba(255,255,255,0.85); margin-bottom: 36px; }
+    .btn-line-white {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      color: #06C755;
+      font-size: 17px;
+      font-weight: 800;
+      padding: 16px 36px;
+      border-radius: 50px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-line-white:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.2); }
+
+    /* ── Footer ── */
+    footer {
+      background: #2C2C2C;
+      color: rgba(255,255,255,0.55);
+      text-align: center;
+      padding: 24px;
+      font-size: 13px;
+    }
+
+    /* ── Mobile tweaks ── */
+    @media (max-width: 600px) {
+      .section { padding: 56px 0; }
+      .hero-title { font-size: 28px; }
+      .steps-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ──────────────────────────────────────────────── -->
+<nav>
+  <div class="container">
+    <div class="nav-logo">🤖 超級AI翻譯機</div>
+    <a href="https://line.me/R/ti/p/@740lbeky" class="nav-cta">免費加入 LINE</a>
+  </div>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-badge">✨ 免費試用，不需下載 App</div>
+    <h1 class="hero-title">
+      台灣家庭與印尼看護<br><span>溝通不再有困難</span>
+    </h1>
+    <p class="hero-sub">
+      在 LINE 裡直接翻譯，繁體中文和印尼文即時互換。<br>
+      不用換 App，不用複製貼上，傳訊息就翻好了。
+    </p>
+    <div class="hero-cta-group">
+      <a href="https://line.me/R/ti/p/@740lbeky" class="btn-line">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+        立即免費加入
+      </a>
+      <p class="hero-note">每月 100 句免費 · 不需信用卡</p>
+    </div>
+
+    <!-- 對話示意 -->
+    <div class="chat-demo">
+      <div class="chat-demo-bar">
+        <div class="chat-avatar">🤖</div>
+        <div class="chat-name">超級AI翻譯機</div>
+      </div>
+      <div class="chat-bubbles">
+        <div class="bubble user">今天中午幫我準備白飯和炒青菜</div>
+        <div class="bubble bot">Tolong siapkan nasi putih dan tumis sayuran untuk makan siang hari ini</div>
+        <div class="bubble user">Saya tidak enak badan hari ini</div>
+        <div class="bubble bot">我今天身體不舒服</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Steps ─────────────────────────────────────────────── -->
+<section id="steps" class="section">
+  <div class="container">
+    <h2 class="section-title">三步驟開始使用</h2>
+    <p class="section-sub">不需要任何設定，加好友就能翻譯</p>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-icon">📲</div>
+        <div class="step-num">STEP 1</div>
+        <div class="step-title">加好友</div>
+        <p class="step-desc">點下方按鈕在 LINE 加入超級AI翻譯機，免費、不需下載任何 App。</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">💬</div>
+        <div class="step-num">STEP 2</div>
+        <div class="step-title">傳送訊息</div>
+        <p class="step-desc">直接在對話框輸入中文或印尼文，不需要按任何特殊按鈕。</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">✅</div>
+        <div class="step-num">STEP 3</div>
+        <div class="step-title">收到翻譯</div>
+        <p class="step-desc">機器人立刻回覆翻譯結果，中文自動翻印尼文，印尼文自動翻中文。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Compare ───────────────────────────────────────────── -->
+<section id="compare" class="section">
+  <div class="container">
+    <h2 class="section-title">為什麼不用 Google 翻譯就好？</h2>
+    <p class="section-sub">專門為台灣家庭日常溝通設計，不是通用翻譯工具</p>
+    <div class="compare-grid">
+      <div class="compare-card ours">
+        <span class="compare-tag">✦ 超級AI翻譯機</span>
+        <h3>直接在 LINE 裡翻</h3>
+        <ul class="compare-list">
+          <li><span>✅</span><span>不用切換 App，翻完直接傳給對方</span></li>
+          <li><span>✅</span><span>群組聊天室也能用，家人和看護同時在線</span></li>
+          <li><span>✅</span><span>AI 理解口語，翻出來的句子更自然</span></li>
+          <li><span>✅</span><span>每月 100 句免費，夠日常使用</span></li>
+        </ul>
+      </div>
+      <div class="compare-card theirs">
+        <span class="compare-tag">一般翻譯工具</span>
+        <h3>需要手動複製貼上</h3>
+        <ul class="compare-list">
+          <li><span>❌</span><span>要先複製文字、切換 App、翻完再貼回去</span></li>
+          <li><span>❌</span><span>群組內無法直接使用，溝通中斷</span></li>
+          <li><span>❌</span><span>逐字直譯，有時看護看不懂意思</span></li>
+          <li><span>❌</span><span>操作步驟多，長輩容易搞混</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Plans ─────────────────────────────────────────────── -->
+<section id="plans" class="section">
+  <div class="container">
+    <h2 class="section-title">選擇適合您的方案</h2>
+    <p class="section-sub">先免費試用，覺得好用再升級</p>
+    <div class="plans-grid">
+      <div class="plan-card">
+        <div class="plan-name">免費版</div>
+        <div class="plan-price">$0 <span>/ 月</span></div>
+        <div class="plan-quota">每月 100 句翻譯</div>
+        <ul class="plan-features">
+          <li><span>✅</span><span>個人私訊使用</span></li>
+          <li><span>✅</span><span>群組聊天室使用</span></li>
+          <li><span>✅</span><span>繁體中文 ↔ 印尼文</span></li>
+          <li><span>✅</span><span>不需信用卡</span></li>
+        </ul>
+      </div>
+      <div class="plan-card featured">
+        <div class="plan-badge">最多人選擇</div>
+        <div class="plan-name">訂閱版</div>
+        <div class="plan-price">$100 <span>/ 月</span></div>
+        <div class="plan-quota">每月 1,000 句翻譯</div>
+        <ul class="plan-features">
+          <li><span>✅</span><span>個人私訊使用</span></li>
+          <li><span>✅</span><span>群組聊天室使用</span></li>
+          <li><span>✅</span><span>繁體中文 ↔ 印尼文</span></li>
+          <li><span>✅</span><span>隨時可取消</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ───────────────────────────────────────────────── -->
+<section id="faq" class="section">
+  <div class="container">
+    <h2 class="section-title">常見問題</h2>
+    <p class="section-sub"></p>
+    <div class="faq-list">
+      <details>
+        <summary>要怎麼開始使用？</summary>
+        <div class="faq-body">點頁面上的「立即免費加入」按鈕，在 LINE 加好友後，直接傳送中文或印尼文訊息就可以翻譯，不需要任何設定步驟。</div>
+      </details>
+      <details>
+        <summary>可以在家庭群組裡用嗎？</summary>
+        <div class="faq-body">可以！把超級AI翻譯機加入群組後，群組裡的任何成員傳訊息都會自動翻譯。群組每月共用 100 句免費額度，升級後共用 1,000 句。</div>
+      </details>
+      <details>
+        <summary>100 句用完了怎麼辦？</summary>
+        <div class="faq-body">剩餘不到 10 句時機器人會提醒您。用完後可以輸入 /訂閱 升級為每月 1,000 句的訂閱版（NT$100／月），或等下個月自動重置免費額度。</div>
+      </details>
+      <details>
+        <summary>翻譯品質如何？</summary>
+        <div class="faq-body">我們使用 Anthropic Claude AI 進行翻譯，能理解日常口語和護理照護用語，翻出來的句子比逐字翻譯更自然，看護更容易理解。</div>
+      </details>
+      <details>
+        <summary>個人資料安全嗎？</summary>
+        <div class="faq-body">我們只儲存您的 LINE 使用者 ID 和翻譯使用量，不儲存翻譯內容。資料存放於 AWS，採用加密保護。</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ── Final CTA ──────────────────────────────────────────── -->
+<section id="final-cta">
+  <h2 class="section-title">現在就開始，完全免費</h2>
+  <p class="section-sub">加好友後立即可用，每月 100 句翻譯不需信用卡</p>
+  <a href="https://line.me/R/ti/p/@740lbeky" class="btn-line-white">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="#06C755"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.630 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+    立即免費加入 LINE
+  </a>
+</section>
+
+<!-- ── Footer ────────────────────────────────────────────── -->
+<footer>
+  <p>© 2026 超級AI翻譯機 · 台灣家庭與印尼看護的溝通橋樑</p>
+</footer>
+
+</body>
+</html>
