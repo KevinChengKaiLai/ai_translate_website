@@ -74,7 +74,9 @@
       border-bottom: 1px solid var(--border);
       padding: 14px 0;
     }
-    nav .container { display: flex; align-items: center; justify-content: space-between; }
+    nav .container { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .nav-email { font-size: 13px; color: var(--muted); }
+    @media (max-width: 480px) { .nav-email { display: none; } }
     .nav-logo { font-weight: 800; font-size: 17px; color: var(--orange); }
     .nav-cta {
       background: #06C755;
@@ -330,6 +332,7 @@
 <nav>
   <div class="container">
     <div class="nav-logo">🤖 超級AI翻譯機</div>
+    <a href="mailto:ai.translator.tw@gmail.com" class="nav-email">ai.translator.tw@gmail.com</a>
     <a href="https://line.me/R/ti/p/@740lbeky" class="nav-cta">免費加入 LINE</a>
   </div>
 </nav>
@@ -503,6 +506,7 @@
 <!-- ── Footer ────────────────────────────────────────────── -->
 <footer>
   <p>© 2026 超級AI翻譯機 · 台灣家庭與印尼看護的溝通橋樑</p>
+  <p style="margin-top:8px;">客服信箱：<a href="mailto:ai.translator.tw@gmail.com" style="color:rgba(255,255,255,0.55);">ai.translator.tw@gmail.com</a></p>
 </footer>
 
 </body>
